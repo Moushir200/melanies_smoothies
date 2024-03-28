@@ -2,6 +2,8 @@
 # Document: https://docs.streamlit.io/library/api-reference/widgets/st.selectbox
 # Payhon libraries: https://repo.anaconda.com/pkgs/snowflake/
 # Import python packages
+# Get data via API
+import requests
 import streamlit as st
 from snowflake.snowpark.functions import col
 #from snowflake.snowpark.context import get_active_session
@@ -16,12 +18,6 @@ st.write(
 # Add text box
 name_on_order = st.text_input('Name of Smoothie')
 st.write('The name of your Smooothie will be:', name_on_order)
-
-# Add a select box
-#option = st.selectbox(
-#    'What is your favorite fruit?',
-#    ('Banana', 'Srawberries', 'Peaches'))
-#st.write('Your favorite fruit is:', option)
 
 # Load data from database
 #session = get_active_session()
@@ -38,14 +34,14 @@ ingredients_list = st.multiselect(
     max_selections =5
 )
 if ingredients_list:
-    #st.write(ingredients_list)
-    #st.text(ingredients_list)
     ingredients_string=''
     #Convert List to String
     for fruit_chosen in ingredients_list:
         ingredients_string+=fruit_chosen+' '
-    #st.write(ingredients_string)
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+        fv_df=st.dataframe(data=fruityvice_response.json(), use_container_width=True)
 
+  
     # Build a SQL Insert Statement
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
                 values ('""" + ingredients_string + """','"""+name_on_order+"""')"""
@@ -57,9 +53,6 @@ if ingredients_list:
     if time_to_interst:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
-# use API
-import requests
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-# st.text(fruityvice_response.json())
-fv_df=st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+
+
 
