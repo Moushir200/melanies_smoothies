@@ -31,8 +31,8 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('Fruit
 
 #Convert Dataframe to pandas
 pd_df=my_dataframe.to_pandas()
-st.dataframe(pd_df)
-st.stop()
+#st.dataframe(pd_df)
+#st.stop()
 
 
 # Add the data to multiselect box
